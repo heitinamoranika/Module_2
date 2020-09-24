@@ -1,4 +1,14 @@
 #This is main code for Module 2
+
+#[TOC]
+
+#1. Clean Part
+#2. Model Build
+#3. Model Diagnosis
+
+
+
+
 #It require the following package to plot
 if (!require(ggplot2)){
   install.packages("ggplot2")
@@ -12,6 +22,10 @@ if (!require(gridExtra)){
 #Please put the Module2.R into the main Folder and run it instead of in Code Folder, or it may not find the BodyFat.csv
 #Everybody change and add code will provide their name and action every line. 
 #The following is clean part 
+
+#1. Clean Part
+
+
 #Read the BodyFat.csv
 RawData = read.csv("Data/BodyFat.csv",sep=",")
 RawDataFrame=data.frame(RawData)
