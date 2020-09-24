@@ -1,9 +1,16 @@
 #This is main code for Module 2
+#Please run the code line by line
+
+#Main code by CHENYANG JIANG and ENZE WANG
+
+#Fix by HanGyu KANG and RUI HUANG
 
 #[TOC]
 
 #1. Clean Part
+
 #2. Model Build
+
 #3. Model Diagnosis
 
 
@@ -19,6 +26,7 @@ if (!require(grid)){
 if (!require(gridExtra)){
   install.packages("gridExtra")
 }
+
 #Please put the Module2.R into the main Folder and run it instead of in Code Folder, or it may not find the BodyFat.csv
 #Everybody change and add code will provide their name and action every line. 
 #The following is clean part 
@@ -118,13 +126,14 @@ ggsave("Image/Boxplot_all.jpeg",g)
 #FOREARM:159, 206, 45,226, 175
 #WRIST:41,39,252,226
 
-#182, his BODYFAT is 0, which is impossible, calculate his BODYFAT by Siri equation, his BODYFAT should be: -3.611687, which is also impossible, we decide to remove him.
-#216 has outstanding BODYFAT, for his DENSITY is too small, check his weight, we define 216 as an extremely obesity case, we decide to keep him.
-#39 occurs too many time in boxplot, just like 216, he is also an obesity case with too many outliers value, we decide to keep him. 
-#42 whose HEIHT is 29.5 inches (74.93 cm), which is too short, we decide to remove him
-#41 occurs too many time in boxplot, just like 39, he is also an obesity case with too many outliers value, we decide to keep him
+#182, his BODYFAT is 0, which is impossible, calculate his BODYFAT by Siri equation, his BODYFAT should be: -3.611687, which is also impossible, we decide to delete him.
+#216 has outstanding BODYFAT, check his weight, we define 216 as an extremely obesity case, we decide to delete him.
+#39 occurs too many time in boxplot, just like 216, he is also an obesity case with too many outliers value, we decide to delete him. 
+#42 whose HEIGHT is 29.5 inches (74.93 cm), which is too short, which can be fixed in BMI steps, the real HEIGHT is 69.4255 inches (176.34077 cm)
+#41 occurs too many time in boxplot, just like 39, he is also an obesity case with too many outliers value, we decide to delete him
 
-FirstFilterData=data.frame(RawData[-c(182,42),])
+FirstFilterData=data.frame(RawData[-c(182,216,39,41),])
+FirstFilterData[FirstFilterData$IDNO==42,"HEIGHT"]=69.4255
 #If you want to check whether our CleanData meets Siri equation, just replace the above line with the following line. 
 #FirstFilterData=CleanData
 dim(FirstFilterData)
@@ -187,6 +196,7 @@ CleanData[CleanData$IDNO==163,"ADIPOSITY"]=703*CleanData[CleanData$IDNO==163,"WE
 CleanData[CleanData$IDNO==221,"ADIPOSITY"]=703*CleanData[CleanData$IDNO==221,"WEIGHT"]/(CleanData[CleanData$IDNO==i,"HEIGHT"]^2)
 CleanData=data.frame(CleanData)
 dim(CleanData)
+
 #Output our CleanData to Data folder. 
 write.csv(CleanData,'Data/CleanData.csv',row.names = FALSE)
 
