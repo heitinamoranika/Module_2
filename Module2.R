@@ -29,6 +29,15 @@ if (!require(gridExtra)){
 if (!require(car)){
   install.packages("car")
 }
+if (!require(corrplot)){
+  install.packages("corrplot")
+}
+if (!require(leaps)){
+  install.packages("leaps")
+}
+if (!require(caret)){
+  install.packages("caret")
+}
 
 #Please put the Module2.R into the main Folder and run it instead of in Code Folder, or it may not find the BodyFat.csv
 #Everybody change and add code will provide their name and action every line. 
@@ -213,13 +222,27 @@ write.csv(CleanData,'Data/CleanData.csv',row.names = FALSE)
 CleanData = read.csv("Data/CleanData.csv",sep=",")
 CleanData=CleanData[,-c(1,3)]
 n=dim(CleanData)[1]
-#We first test the vif of the simple linear regression
+
+#Heat plot for correlation
+
+jpeg(file="Image/Correlation_among_variables.jpeg")
+corr=cor(CleanData)
+corrplot(corr,  
+         type="upper", method="color",addCoef.col = "black",main='Correlation among variables')
+dev.off()
+
+#Most of variables are correlated, we will consider the simple model with as few variables as possible. 
+
+#We test the vif of the simple linear regression
 SLR = lm(BODYFAT~.,data=CleanData) 
 vif = car::vif(SLR) 
 mean(vif) 
 vif
 
+#Weight enjoys the largest VIF. 
+
 #You can see that there is serious multicollinearity, therefore after we build our final model, we will check the multicollinearity, and our model should be as simple as possible
+
 jpeg(file="Image/Simple_Linear_Regression_Analysis.jpeg")
 par(mfrow=c(2,3)) 
 plot(SLR) 
@@ -268,6 +291,54 @@ SLR_Log_Full=lm(BODYFAT~LogAGE+LogWEIGHT+LogHEIGHT+LogADIPOSITY+LogNECK+LogCHEST
 SLR_sq_Full=lm(BODYFAT~sqAGE+sqWEIGHT+sqHEIGHT+sqADIPOSITY+sqNECK+sqCHEST+sqABDOMEN+sqHIP+sqTHIGH+sqKNEE+sqANKLE+sqBICEPS+sqFOREARM+sqWRIST,data=ExtendData)
 SLR_All_Full=lm(BODYFAT~.,data=ExtendData)
 
+#All possible subsets methods with leaps package
+#First method to variables selection method is subsets methods
+#No transformation
+LeapsResults_Full=regsubsets(BODYFAT~AGE+WEIGHT+HEIGHT+ADIPOSITY+NECK+CHEST+ABDOMEN+HIP+THIGH+KNEE+ANKLE+BICEPS+FOREARM+WRIST,data=ExtendData,nbest=1,method="exhaustive")
+LeapsResults_Full_Table=cbind(summary(LeapsResults_Full)$which,summary(LeapsResults_Full)$rsq,summary(LeapsResults_Full)$rss,summary(LeapsResults_Full)$adjr2,summary(LeapsResults_Full)$cp,summary(LeapsResults_Full)$bic)
+dimnames(LeapsResults_Full_Table)[[2]]=c(dimnames(summary(LeapsResults_Full)$which)[[2]],"rsq","rss","adjrsq","cp","bic")
+show(LeapsResults_Full_Table)
+# (Intercept) AGE WEIGHT HEIGHT ADIPOSITY NECK CHEST ABDOMEN HIP THIGH KNEE ANKLE BICEPS FOREARM WRIST       rsq      rss    adjrsq        cp       bic
+#1           1   0      0      0         0    0     0       1   0     0    0     0      0       0     0 0.6610804 4575.124 0.6597027 57.837180 -257.3072
+#2           1   0      1      0         0    0     0       1   0     0    0     0      0       0     0 0.7052744 3978.543 0.7028684 20.478633 -286.4439
+#3           1   0      1      0         0    0     0       1   0     0    0     0      0       0     1 0.7168079 3822.850 0.7133260 12.207045 -290.8305
+
+
+#log transformation
+LeapsResults_Log=regsubsets(BODYFAT~LogAGE+LogWEIGHT+LogHEIGHT+LogADIPOSITY+LogNECK+LogCHEST+LogABDOMEN+LogHIP+LogTHIGH+LogKNEE+LogANKLE+LogBICEPS+LogFOREARM+LogWRIST,data=ExtendData,nbest=1,method="exhaustive")
+LeapsResults_Log_Table=cbind(summary(LeapsResults_Log)$which,summary(LeapsResults_Log)$rsq,summary(LeapsResults_Log)$rss,summary(LeapsResults_Log)$adjr2,summary(LeapsResults_Log)$cp,summary(LeapsResults_Log)$bic)
+dimnames(LeapsResults_Log_Table)[[2]]=c(dimnames(summary(LeapsResults_Log)$which)[[2]],"rsq","rss","adjrsq","cp","bic")
+show(LeapsResults_Log_Table)
+
+#  (Intercept) LogAGE LogWEIGHT LogHEIGHT LogADIPOSITY LogNECK LogCHEST LogABDOMEN LogHIP LogTHIGH LogKNEE LogANKLE LogBICEPS LogFOREARM LogWRIST       rsq      rss    adjrsq        cp  bic
+#1           1      0         0         0            0       0        0          1      0        0       0        0         0          0        0 0.6609432 4576.975 0.6595649 56.112869  -257.2069
+#2           1      0         0         0            0       0        0          1      0        0       0        0         0          0        1 0.7031501 4007.218 0.7007269 20.753829  -284.6628
+#3           1      0         0         1            0       0        0          1      0        0       0        0         0          0        1 0.7197553 3783.062 0.7163097  8.055881  -293.4252
+
+
+#Square transformation
+LeapsResults_Square=regsubsets(BODYFAT~sqAGE+sqWEIGHT+sqHEIGHT+sqADIPOSITY+sqNECK+sqCHEST+sqABDOMEN+sqHIP+sqTHIGH+sqKNEE+sqANKLE+sqBICEPS+sqFOREARM+sqWRIST,data=ExtendData,nbest=1,method="exhaustive")
+LeapsResults_Square_Table=cbind(summary(LeapsResults_Square)$which,summary(LeapsResults_Square)$rsq,summary(LeapsResults_Square)$rss,summary(LeapsResults_Square)$adjr2,summary(LeapsResults_Square)$cp,summary(LeapsResults_Square)$bic)
+dimnames(LeapsResults_Square_Table)[[2]]=c(dimnames(summary(LeapsResults_Square)$which)[[2]],"rsq","rss","adjrsq","cp","bic")
+show(LeapsResults_Square_Table)
+
+#  (Intercept) sqAGE sqWEIGHT sqHEIGHT sqADIPOSITY sqNECK sqCHEST sqABDOMEN sqHIP sqTHIGH sqKNEE sqANKLE sqBICEPS sqFOREARM sqWRIST       rsq      rss    adjrsq        cp       bic
+#1           1     0        0        0           0      0       0         1     0       0      0       0        0         0       0 0.6556157 4648.892 0.6542158 52.988192 -253.3404
+#2           1     0        1        0           0      0       0         1     0       0      0       0        0         0       0 0.7016979 4026.822 0.6992628 15.248075 -283.4526
+#3           1     0        1        0           0      0       0         1     0       0      0       0        0         0       1 0.7105030 3907.961 0.7069436  9.654815 -285.3697
+
+#All variables
+LeapsResults=regsubsets(BODYFAT~.,data=ExtendData,nbest=1,method="exhaustive")
+LeapsResults_Table=cbind(summary(LeapsResults)$which,summary(LeapsResults)$rsq,summary(LeapsResults)$rss,summary(LeapsResults)$adjr2,summary(LeapsResults)$cp,summary(LeapsResults)$bic)
+dimnames(LeapsResults_Table)[[2]]=c(dimnames(summary(LeapsResults)$which)[[2]],"rsq","rss","adjrsq","cp","bic")
+show(LeapsResults_Table)
+
+#First model only contains ABDOMEN
+#Second model contains ABDOMEN and sqWEIGHT
+#Third model contains LogWRIST and sqWEIGHT and LogABDOMEN
+
+
+
 # forward AIC
 step(SLR0,scope=list(upper=SLR_Full),direction='forward', k=2)
 #AIC=682.97
@@ -309,124 +380,72 @@ step(SLR0,scope=list(upper=SLR_All_Full),direction='forward', k=log(n))
 #BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST
 
 
-
-#The best model are the following, we check their VIF:
-
-
-#BODYFAT ~ ABDOMEN + WEIGHT + WRIST + ADIPOSITY + NECK + AGE + FOREARM + CHEST
-Model1 = lm(BODYFAT ~ ABDOMEN + WEIGHT + WRIST + ADIPOSITY + NECK + AGE + FOREARM + CHEST,data=ExtendData) 
-vif = car::vif(Model1) 
-mean(vif) 
-#6.085865
-max(vif)
-# 11.50582
-#Exist serious multicollinearity
-
-#BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT + LogNECK + LogAGE + LogFOREARM
-
-Model2 = lm(BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT + LogNECK + LogAGE + LogFOREARM,data=ExtendData) 
-vif = car::vif(Model2) 
-mean(vif) 
-#2.096706
-max(vif)
-# 3.163965
-#Not serious multicollinearity
-
-#BODYFAT ~ sqABDOMEN + sqWEIGHT + sqWRIST + sqBICEPS
-
-Model3 = lm(BODYFAT ~ sqABDOMEN + sqWEIGHT + sqWRIST + sqBICEPS,data=ExtendData) 
-vif = car::vif(Model3) 
-mean(vif) 
-#3.832809
-max(vif)
-# 6.772439
-#Not serious multicollinearity
-
-#BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST + LogADIPOSITY + LogNECK + LogBICEPS + sqBICEPS + AGE + CHEST + sqNECK + sqFOREARM
-
-Model4 = lm(BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST + LogADIPOSITY + LogNECK + LogBICEPS + sqBICEPS + AGE + CHEST + sqNECK + sqFOREARM,data=ExtendData) 
-vif = car::vif(Model4) 
-mean(vif) 
-#61.19585
-max(vif)
-# 212.3222
-#Exist serious multicollinearity
-
-#BODYFAT ~ ABDOMEN + WEIGHT + WRIST
-
-Model5 = lm(BODYFAT ~ ABDOMEN + WEIGHT + WRIST,data=ExtendData) 
-vif = car::vif(Model5) 
-mean(vif) 
-#3.819638
-max(vif)
-# 5.385934
-#Not serious multicollinearity
-
-#BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT
-
-Model6 = lm(BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT,data=ExtendData) 
-vif = car::vif(Model6) 
-mean(vif) 
-#1.48797
-max(vif)
-# 1.735822
-#Not serious multicollinearity
-
-#BODYFAT ~ sqABDOMEN + sqWEIGHT + sqWRIST
-
-Model7 = lm(BODYFAT ~ sqABDOMEN + sqWEIGHT + sqWRIST,data=ExtendData) 
-vif = car::vif(Model7) 
-mean(vif) 
-#3.673506
-max(vif)
-#5.134862
-#Not serious multicollinearity
+#The best variables is ABDOMEN, WEIGHT, WRIST, HEIGHT and their transformation. 
 
 #BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST
+#BODYFAT ~ ABDOMEN + sqWEIGHT
+#BODYFAT ~ sqABDOMEN + sqWEIGHT + sqWRIST
+#BODYFAT ~ sqABDOMEN + sqWEIGHT
+#BODYFAT ~ sqABDOMEN
+#BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT
+#BODYFAT ~ LogABDOMEN + LogWRIST
+#BODYFAT ~ LogABDOMEN
+#BODYFAT ~ ABDOMEN + WEIGHT + WRIST
+#BODYFAT ~ ABDOMEN + WEIGHT
+#BODYFAT ~ ABDOMEN
 
-Model8 = lm(BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST,data=ExtendData) 
-vif = car::vif(Model8) 
-mean(vif) 
-#3.595182
-max(vif)
-# 4.976449
-#Not serious multicollinearity
+#Now try use repeated cross-validation to test their performance
 
-#In the model before, ABDOMEN is the most important, we will test is there any necessary to add other variables:
+set.seed(1) 
+train.control <- trainControl(method = "repeatedcv", number = 10, repeats=20)
+model1=train(BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST, data = ExtendData, method = "lm",trControl = train.control)
+print(model1)
+#RMSE      Rsquared   MAE     
+#3.938095  0.7257914  3.263941
+model2=train(BODYFAT ~ ABDOMEN + sqWEIGHT, data = ExtendData, method = "lm",trControl = train.control)
+print(model2)
+#RMSE      Rsquared  MAE     
+#4.005097  0.714609  3.272836
+model3=train(BODYFAT ~ sqABDOMEN + sqWEIGHT + sqWRIST, data = ExtendData, method = "lm",trControl = train.control)
+print(model3)
+#RMSE      Rsquared   MAE     
+#4.007361  0.7164205  3.316936
+model4=train(BODYFAT ~ sqABDOMEN + sqWEIGHT, data = ExtendData, method = "lm",trControl = train.control)
+print(model4)
+#RMSE      Rsquared   MAE     
+#4.046585  0.7088827  3.300799
+model5=train(BODYFAT ~ sqABDOMEN, data = ExtendData, method = "lm",trControl = train.control)
+print(model5)
+#RMSE      Rsquared   MAE    
+#4.322555  0.6624562  3.55429
+model6=train(BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT, data = ExtendData, method = "lm",trControl = train.control)
+print(model6)
+#RMSE      Rsquared   MAE    
+#3.932274  0.7198841  3.26326
+model7=train(BODYFAT ~ LogABDOMEN + LogWRIST, data = ExtendData, method = "lm",trControl = train.control)
+print(model7)
+#RMSE      Rsquared   MAE     
+#4.034357  0.7086492  3.335469
+model8=train(BODYFAT ~ LogABDOMEN, data = ExtendData, method = "lm",trControl = train.control)
+print(model8)
+#RMSE      Rsquared   MAE     
+#4.287241  0.6685642  3.507524
+model9=train(BODYFAT ~ ABDOMEN + WEIGHT + WRIST, data = ExtendData, method = "lm",trControl = train.control)
+print(model9)
+#RMSE      Rsquared   MAE     
+#3.963426  0.7223787  3.286176
+model10=train(BODYFAT ~ ABDOMEN + WEIGHT, data = ExtendData, method = "lm",trControl = train.control)
+print(model10)
+#RMSE      Rsquared   MAE     
+#4.016296  0.7111194  3.286546
+model11=train(BODYFAT ~ ABDOMEN, data = ExtendData, method = "lm",trControl = train.control)
+print(model11)
+#RMSE      Rsquared   MAE     
+#4.287852  0.6711991  3.511813
 
-model1=lm(BODYFAT ~ ABDOMEN + WEIGHT + WRIST,data=ExtendData)
-summary(model1)
-#Multiple R-squared:  0.7168,	Adjusted R-squared:  0.7133 
-model1a=lm(BODYFAT ~ ABDOMEN + WEIGHT,data=ExtendData)
-summary(model1a)
-#Multiple R-squared:  0.7053,	Adjusted R-squared:  0.7029
-model1b=lm(BODYFAT ~ ABDOMEN + WRIST,data=ExtendData)
-summary(model1b)
-#Multiple R-squared:  0.7003,	Adjusted R-squared:  0.6979 
-model2=lm(BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT,data=ExtendData)
-summary(model2)
-#Multiple R-squared:  0.7198,	Adjusted R-squared:  0.7163 
-model2a=lm(BODYFAT ~ LogABDOMEN + LogWRIST,data=ExtendData)
-summary(model2a)
-#Multiple R-squared:  0.7032,	Adjusted R-squared:  0.7007 
-model2b=lm(BODYFAT ~ LogABDOMEN + LogHEIGHT,data=ExtendData)
-summary(model2b)
-#Multiple R-squared:  0.6986,	Adjusted R-squared:  0.6962 
-model3=lm(BODYFAT ~ sqABDOMEN + sqWEIGHT + sqWRIST,data=ExtendData)
-summary(model3)
-#Multiple R-squared:  0.7105,	Adjusted R-squared:  0.7069 
-model3a=lm(BODYFAT ~ sqABDOMEN + sqWEIGHT,data=ExtendData)
-summary(model3a)
-#Multiple R-squared:  0.7017,	Adjusted R-squared:  0.6993 
-model3b=lm(BODYFAT ~ sqABDOMEN + sqWRIST,data=ExtendData)
-summary(model3b)
-#Multiple R-squared:  0.6903,	Adjusted R-squared:  0.6878 
-model4=lm(BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST,data=ExtendData)
-summary(model4)
-#Multiple R-squared:  0.7199,	Adjusted R-squared:  0.7165 
-model4a=lm(BODYFAT ~ ABDOMEN + sqWEIGHT,data=ExtendData)
-summary(model4a)
-#Multiple R-squared:  0.7079,	Adjusted R-squared:  0.7056 
-model4b=lm(BODYFAT ~ ABDOMEN + LogWRIST,data=ExtendData)
-summary(model4b)
-#Multiple R-squared:  0.7003,	Adjusted R-squared:  0.6979 
+#The following three model perform very good:
+
+
+#BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT
+#BODYFAT ~ ABDOMEN + WEIGHT + WRIST
+#BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST
