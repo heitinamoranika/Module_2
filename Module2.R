@@ -241,6 +241,15 @@ vif
 
 #Weight enjoys the largest VIF. 
 
+#BOXCOX test
+
+bc=boxCox(SLR)
+lambda=bc$x[which(bc$y==max(bc$y))]
+lambda
+#lambda=1.030303
+
+#It seems that there is no necessary for BOXCOX
+
 #You can see that there is serious multicollinearity, therefore after we build our final model, we will check the multicollinearity, and our model should be as simple as possible
 
 jpeg(file="Image/Simple_Linear_Regression_Analysis.jpeg")
@@ -449,3 +458,145 @@ print(model11)
 #BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT
 #BODYFAT ~ ABDOMEN + WEIGHT + WRIST
 #BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST
+
+#As we told before, we must test there is any multicollinearity
+Model1 = lm(BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT,data=ExtendData) 
+vif = car::vif(Model1) 
+mean(vif)
+#1.48797
+vif
+#1.511346   1.735822   1.216742 
+
+
+Model2 = lm(BODYFAT ~ ABDOMEN + WEIGHT + WRIST,data=ExtendData) 
+vif = car::vif(Model2) 
+mean(vif) 
+#3.819638
+vif
+#4.075237 5.385934 1.997742 
+
+
+Model3 = lm(BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST,data=ExtendData) 
+vif = car::vif(Model3) 
+mean(vif) 
+#3.595182
+vif
+#3.892861 4.976449 1.916236 
+
+
+#It seems that all model perform well. There is no serious multicollinearity
+
+# Model diagnosis
+#The following is Standardized Residuals, QQ plot, Leverage Values, Cook's Distance, DFFITS and DEBETAS
+
+#Model 1
+
+
+Model1 = lm(BODYFAT ~ LogABDOMEN + LogWRIST + LogHEIGHT,data=ExtendData)
+
+Model=Model1
+p=3
+jpeg(file="Image/Diagnostics_Model1.jpeg")
+par(mfrow=c(2,3)) 
+#Normal Q-Q Plot of the Residuals
+plot(predict(Model),resid(Model),pch=19,cex=1.2,xlab="BODYFAT(%)", ylab="Standardized Residuals",main="Standardized Residual Plot")
+abline(a=0,b=0,col="red",lwd=3)
+
+#QQ plot for residual 
+plot(Model, which=c(2),main="Normal Q-Q Plot of the Residuals")
+
+#Leverage Values
+pii = hatvalues(Model)
+plot(1:n,pii,type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="Pii",main="Leverage Values (Pii)")
+abline(h=2*p/n,col="red",lwd=3)
+
+#Cook's distance
+cooki=cooks.distance(Model)
+plot(1:n,cooki,type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="Cook's Distance",main="Cook's Distance")
+abline(h=qf(0.5, p, n-p),col="red",lwd=3)
+
+#DFFITS
+plot(dffits(Model1),type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="DFFITS",main="DFFITS")
+abline(h=2*sqrt(p/n),col="red",lwd=3)
+abline(h=-2*sqrt(p/n),col="red",lwd=3)
+
+#DEBETAS
+plot(dfbetas(Model1),type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="DEBETAS",main="DEBETAS")
+abline(h=2/sqrt(n),col="red",lwd=3)
+abline(h=-2/sqrt(n),col="red",lwd=3)
+dev.off()
+
+#Model 2
+
+Model2 = lm(BODYFAT ~ ABDOMEN + WEIGHT + WRIST,data=ExtendData) 
+
+
+Model=Model2
+p=3
+jpeg(file="Image/Diagnostics_Model2.jpeg")
+par(mfrow=c(2,3)) 
+#Normal Q-Q Plot of the Residuals
+plot(predict(Model),resid(Model),pch=19,cex=1.2,xlab="BODYFAT(%)", ylab="Standardized Residuals",main="Standardized Residual Plot")
+abline(a=0,b=0,col="red",lwd=3)
+
+#QQ plot for residual 
+plot(Model, which=c(2),main="Normal Q-Q Plot of the Residuals")
+
+#Leverage Values
+pii = hatvalues(Model)
+plot(1:n,pii,type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="Pii",main="Leverage Values (Pii)")
+abline(h=2*p/n,col="red",lwd=3)
+
+#Cook's distance
+cooki=cooks.distance(Model)
+plot(1:n,cooki,type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="Cook's Distance",main="Cook's Distance")
+abline(h=qf(0.5, p, n-p),col="red",lwd=3)
+
+#DFFITS
+plot(dffits(Model),type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="DFFITS",main="DFFITS")
+abline(h=2*sqrt(p/n),col="red",lwd=3)
+abline(h=-2*sqrt(p/n),col="red",lwd=3)
+
+#DEBETAS
+plot(dfbetas(Model),type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="DEBETAS",main="DEBETAS")
+abline(h=2/sqrt(n),col="red",lwd=3)
+abline(h=-2/sqrt(n),col="red",lwd=3)
+dev.off()
+
+#Model 3
+
+Model3 = lm(BODYFAT ~ ABDOMEN + sqWEIGHT + LogWRIST,data=ExtendData) 
+
+
+Model=Model3
+p=3
+jpeg(file="Image/Diagnostics_Model3.jpeg")
+par(mfrow=c(2,3)) 
+#Normal Q-Q Plot of the Residuals
+plot(predict(Model),resid(Model),pch=19,cex=1.2,xlab="BODYFAT(%)", ylab="Standardized Residuals",main="Standardized Residual Plot")
+abline(a=0,b=0,col="red",lwd=3)
+
+#QQ plot for residual 
+plot(Model, which=c(2),main="Normal Q-Q Plot of the Residuals")
+
+#Leverage Values
+pii = hatvalues(Model)
+plot(1:n,pii,type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="Pii",main="Leverage Values (Pii)")
+abline(h=2*p/n,col="red",lwd=3)
+
+#Cook's distance
+cooki=cooks.distance(Model)
+plot(1:n,cooki,type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="Cook's Distance",main="Cook's Distance")
+abline(h=qf(0.5, p, n-p),col="red",lwd=3)
+
+#DFFITS
+plot(dffits(Model),type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="DFFITS",main="DFFITS")
+abline(h=2*sqrt(p/n),col="red",lwd=3)
+abline(h=-2*sqrt(p/n),col="red",lwd=3)
+
+#DEBETAS
+plot(dfbetas(Model),type="p",pch=19,cex=1.2,cex.lab=1.5,cex.main=1.5,xlab="Index",ylab="DEBETAS",main="DEBETAS")
+abline(h=2/sqrt(n),col="red",lwd=3)
+abline(h=-2/sqrt(n),col="red",lwd=3)
+dev.off()
+
