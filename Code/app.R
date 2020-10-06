@@ -1,25 +1,35 @@
 library(shiny)
 library(ggplot2)
+
+
+#This is code for shiny app
+
+#This application is main edited by RUI HUANG
+
+#The interface, ggplot and unit part are fixed, edited and maintained by ENZE WANG
+
+#Other problems are fixed by HanGyu KANG and CHENYANG JIANG
+
 ui<-navbarPage('Bodyfat Calculator',inverse = T,collapsible = T,
                tabPanel("Group 2",
                         sidebarLayout(position = "right",
                                       sidebarPanel(
-                                        numericInput("Abdomen", "Abdomen circumference:", min = 0, max = 500, value = NA),
+                                        numericInput("Abdomen", "Abdomen circumference:", min = 20, max = 200, value = NA),
                                         selectInput("Abdomenunit", "Abdomen Units:",list("cm" = "cm","inch" = "inch")),
-                                        helpText("The value must between 0 to 300 cm (0 to 118.11 inches)"),
-                                        numericInput("Weight", "Weight:", min = 0, max = 500, value = NA),
+                                        helpText("The value must between 20 to 200 cm (7.87402 to 78.7402 inches)"),
+                                        numericInput("Weight", "Weight:", min = 50, max = 550, value = NA),
                                         selectInput("Weightunit", "Weight Units:",list("lbs" = "lbs","kg" = "kg")),
-                                        helpText("The value  must between 0 to 500 lbs (0 to 226.796 kg)"),
+                                        helpText("The value  must between 50 to 550 lbs (22.6796 to 249.476 kg)"),
                                         numericInput("Wrist", "Wrist circumference:", min = 0, max = 100, value = NA),
                                         selectInput("Wristunit", "Wrist Units:",list("cm" = "cm","inch" = "inch")),
-                                        helpText("The value must between 0 to 100 cm (0 to 39.3701 inches)"),
+                                        helpText("The value must between 4 to 40 cm (1.5748 to 15.748 inches)"),
                                         selectInput("Gender", "Gender:",list("Men" = "Men","Women" = "Women")),
                                         helpText("The gender is not necessary for our model prediction, but for bodyfat suggestion"),
                                         actionButton("calculate",label = "Submit",icon=icon('angle-double-right'))
                                       ),
                                       mainPanel(tabsetPanel(
                                         tabPanel("What's Your Bodyfat",h1("Your body fat is:"),textOutput("results"),
-                                        tags$style("#results {font-size:50px;}"),
+                                        tags$style("#results {font-size:36px;}"),
                                         textOutput("warning"),
                                         plotOutput(outputId="PiePlot"),h1("Suggestion:"),textOutput("suggestion"),style = "font-size:120%"),
                                         tabPanel("Acknowledgements",h1("Questions:"),htmlOutput("Questions"),h1("Acknowledgements:"),htmlOutput("Acknowledgements"), 
@@ -61,11 +71,11 @@ server<-shinyServer(function(input, output) {
     if (is.na(d[2]) == TRUE | is.na(d[3]) == TRUE | is.na(d[4]) == TRUE){
       outcome = "Please input your data"
     }
-    else if (d[2] < 0 | d[2] > 300 | d[3] < 0 | d[3] > 500
-             | d[4] < 0 | d[4] > 100){
+    else if (d[2] < 20 | d[2] > 200 | d[3] < 50 | d[3] > 550
+             | d[4] < 4 | d[4] > 40){
       outcome = "Input Error 1"
     }
-    else if(bodyfat<0 | bodyfat>80){
+    else if(bodyfat<0 | bodyfat>60){
       outcome = "Input Error 2"
     }
     else{
@@ -84,9 +94,9 @@ server<-shinyServer(function(input, output) {
   
   output$warning <- renderText({
     if(outcome()=="Input Error 1"){
-      paste("Be careful our application does not allow negative input or extreme values. It seems that your input is out of normal range. Please check your input")
+      paste("Be careful our application does not allow extreme input values. It seems that your input is out of normal range. Please check your input")
     }else if(outcome()=="Input Error 2"){
-      paste("Be careful our application does not allow bodyfat to be smaller than 0% and larger than 80%. It seems that your output is out of normal range. Please check your input")
+      paste("Be careful our application does not allow bodyfat to be smaller than 0% and larger than 60%. It seems that your output is out of normal range. Please check your input")
     }else if(outcome()=="Please input your data"){
       paste("Please input your data")
     }else{}
@@ -102,7 +112,7 @@ server<-shinyServer(function(input, output) {
         }else if((BODYFAT<13 & input$Gender=="Men") | (BODYFAT<20 & input$Gender=="Women")){
           paste("According to the American Council on Exercise, your body fat is in athletes range, please keep exercise and healthy diet")
         }else if((BODYFAT<17 & input$Gender=="Men") | (BODYFAT<24 & input$Gender=="Women")){
-          paste("According to the American Council on Exercise, your body fat is in fitness range, please keep exercise and healthy diet")
+          paste("According to the American Council on Exercise, your body fat is in fitness range, please keep more exercise and healthier diet")
         }else if((BODYFAT<24 & input$Gender=="Men") | (BODYFAT<31 & input$Gender=="Women")){
           paste("According to the American Council on Exercise, your body fat is in acceptable range, you can pay attention to your physical exercise and avoid junk food")
         }else{
@@ -129,10 +139,8 @@ server<-shinyServer(function(input, output) {
         Color="#FCF400"
       }else if(BODYFAT<30){
         Color="#FCB300"
-      }else if(BODYFAT<35){
-        Color="#FC0000"
       }else{
-        
+        Color="#FC0000"
       }
       BodyPart=c("Other",paste("Bodyfat:",BODYFAT,"%"))
       BodyPartPercentage=c(100-BODYFAT,BODYFAT)
@@ -180,7 +188,7 @@ server<-shinyServer(function(input, output) {
           <br>
           This application is main edited by RUI HUANG <br> 
           <br>
-          The interface and unit is fixed and edited by ENZE WANG <br> 
+          The interface, ggplot and unit part are fixed, edited and maintained by ENZE WANG <br> 
           <br>
           Other problems are fixed by HanGyu KANG and CHENYANG JIANG')
   })
