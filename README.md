@@ -2,8 +2,6 @@
 
 **Group Member:** CHENYANG JIANG, HanGyu KANG, RUI HUANG, ENZE WANG
 
-[TOC]
-
 ## Contribution of Module 2
 
 |                | Github Repository, Main Code    | Shiny Application                               | Two-Page Summary | Narrated Presentation            |
