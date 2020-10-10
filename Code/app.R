@@ -20,9 +20,6 @@ ui<-navbarPage('Bodyfat Calculator',inverse = T,collapsible = T,
                                         numericInput("Weight", "Weight:", min = 50, max = 550, value = NA),
                                         selectInput("Weightunit", "Weight Units:",list("lbs" = "lbs","kg" = "kg")),
                                         helpText("The value  must between 50 to 550 lbs (22.6796 to 249.476 kg)"),
-                                        numericInput("Wrist", "Wrist circumference:", min = 0, max = 100, value = NA),
-                                        selectInput("Wristunit", "Wrist Units:",list("cm" = "cm","inch" = "inch")),
-                                        helpText("The value must between 4 to 40 cm (1.5748 to 15.748 inches)"),
                                         selectInput("Gender", "Gender:",list("Men" = "Men","Women" = "Women")),
                                         helpText("The gender is not necessary for our model prediction, but for bodyfat suggestion"),
                                         actionButton("calculate",label = "Submit",icon=icon('angle-double-right'))
@@ -32,7 +29,7 @@ ui<-navbarPage('Bodyfat Calculator',inverse = T,collapsible = T,
                                         tags$style("#results {font-size:36px;}"),
                                         textOutput("warning"),
                                         plotOutput(outputId="PiePlot"),h1("Suggestion:"),textOutput("suggestion"),style = "font-size:120%"),
-                                        tabPanel("Acknowledgements",h1("Questions:"),htmlOutput("Questions"),h1("Acknowledgements:"),htmlOutput("Acknowledgements"), 
+                                        tabPanel("Introduction and Acknowledgements",h1("Introduction:"),htmlOutput("Introduction"),h1("Questions:"),htmlOutput("Questions"),h1("Acknowledgements:"),htmlOutput("Acknowledgements"), 
                                                  style = "font-size:120%")
                                       )
                                       
@@ -43,7 +40,7 @@ server<-shinyServer(function(input, output) {
   #model = lm(formula = BODYFAT ~ ABDOMEN + WEIGHT + WRIST, data = data)
   
   
-  k = c(-24.22925,0.87792,-0.08384,-1.26116)
+  k = c(-42.39091,0.89355,-0.11893)
   
   
   outcome <- reactive({
@@ -60,19 +57,12 @@ server<-shinyServer(function(input, output) {
       WEIGHT=input$Weight
     }
     
-    if(input$Wristunit=="inch"){
-      WRIST=input$Wrist*2.54
-    }else{
-      WRIST=input$Wrist
-    }
-    
-    d = c(1,ABDOMEN,WEIGHT,WRIST)
+    d = c(1,ABDOMEN,WEIGHT)
     bodyfat=as.numeric(round(k%*%d))
-    if (is.na(d[2]) == TRUE | is.na(d[3]) == TRUE | is.na(d[4]) == TRUE){
+    if (is.na(d[2]) == TRUE | is.na(d[3]) == TRUE){
       outcome = "Please input your data"
     }
-    else if (d[2] < 20 | d[2] > 200 | d[3] < 50 | d[3] > 550
-             | d[4] < 4 | d[4] > 40){
+    else if (d[2] < 20 | d[2] > 200 | d[3] < 50 | d[3] > 550){
       outcome = "Input Error 1"
     }
     else if(bodyfat<0 | bodyfat>60){
@@ -113,7 +103,7 @@ server<-shinyServer(function(input, output) {
           paste("According to the American Council on Exercise, your body fat is in athletes range, please keep exercise and healthy diet")
         }else if((BODYFAT<17 & input$Gender=="Men") | (BODYFAT<24 & input$Gender=="Women")){
           paste("According to the American Council on Exercise, your body fat is in fitness range, please keep more exercise and healthier diet")
-        }else if((BODYFAT<24 & input$Gender=="Men") | (BODYFAT<31 & input$Gender=="Women")){
+        }else if((BODYFAT<25 & input$Gender=="Men") | (BODYFAT<31 & input$Gender=="Women")){
           paste("According to the American Council on Exercise, your body fat is in acceptable range, you can pay attention to your physical exercise and avoid junk food")
         }else{
           paste("According to the American Council on Exercise, your body fat is in obesity range, please keep away from junk food, exercise everyday and monitor your own weight. If necessary, you should ask doctors for more advice")
@@ -175,12 +165,22 @@ server<-shinyServer(function(input, output) {
           RUI HUANG rhuang95@wisc.edu')
   })
   
-  output$Acknowledgements <- renderUI({
+  output$Introduction <- renderUI({
     HTML('
           <br>
           This application is for Bodyfat subjects<br>
           <br>
           This subject want to predict Bodyfat with your body data<br>
+          <br>
+          Our application needs your weight and abdomen circumference, you can measure in English or metric units <br>
+          <br>
+          Please refer to Official Navy Abdominal Circumference Measurement Demonstration on youtube and other information on website if you want to know how to measure precise abdomen circumference. https://www.youtube.com/watch?v=ZH1aHB67bUk&ab_channel=personnelguru
+          ')
+  })
+  
+  
+  output$Acknowledgements <- renderUI({
+    HTML('
           <br>
           More information can be found in our group github: https://github.com/moslandwez/Module_2 <br>
           <br>
