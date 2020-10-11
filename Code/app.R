@@ -37,7 +37,7 @@ ui<-navbarPage('Bodyfat Calculator',inverse = T,collapsible = T,
 ))
 
 server<-shinyServer(function(input, output) {
-  #model = lm(formula = BODYFAT ~ ABDOMEN + WEIGHT + WRIST, data = data)
+  #model = lm(formula = BODYFAT ~ ABDOMEN + WEIGHT, data = data)
   
   
   k = c(-42.39091,0.89355,-0.11893)
@@ -97,13 +97,13 @@ server<-shinyServer(function(input, output) {
   output$suggestion <- renderText({
     if(outcome()!="Input Error 1" & outcome()!="Input Error 2" & outcome()!="Please input your data"){
       BODYFAT=outcome()
-        if((BODYFAT<5 & input$Gender=="Men") | (BODYFAT<13 & input$Gender=="Women")){
+        if((BODYFAT<5 & input$Gender=="Men")        | (BODYFAT<13 & input$Gender=="Women")){
           paste("According to the American Council on Exercise, your body fat falls into the essential body fat range, essential fat is the minimum amount of fat for your daily physical health, it is unhealthy to stay here")
         }else if((BODYFAT<13 & input$Gender=="Men") | (BODYFAT<20 & input$Gender=="Women")){
           paste("According to the American Council on Exercise, your body fat is in athletes range, please keep exercise and healthy diet")
         }else if((BODYFAT<17 & input$Gender=="Men") | (BODYFAT<24 & input$Gender=="Women")){
           paste("According to the American Council on Exercise, your body fat is in fitness range, please keep more exercise and healthier diet")
-        }else if((BODYFAT<25 & input$Gender=="Men") | (BODYFAT<31 & input$Gender=="Women")){
+        }else if((BODYFAT<24 & input$Gender=="Men") | (BODYFAT<31 & input$Gender=="Women")){
           paste("According to the American Council on Exercise, your body fat is in acceptable range, you can pay attention to your physical exercise and avoid junk food")
         }else{
           paste("According to the American Council on Exercise, your body fat is in obesity range, please keep away from junk food, exercise everyday and monitor your own weight. If necessary, you should ask doctors for more advice")
