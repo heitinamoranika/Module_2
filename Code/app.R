@@ -40,7 +40,7 @@ server<-shinyServer(function(input, output) {
   #model = lm(formula = BODYFAT ~ ABDOMEN + WEIGHT, data = data)
   
   
-  k = c(-42.39091,0.89355,-0.11893)
+  k = c(-42.26886,0.89944,-0.12270)
   
   
   outcome <- reactive({
@@ -132,14 +132,14 @@ server<-shinyServer(function(input, output) {
       }else{
         Color="#FC0000"
       }
-      BodyPart=c("Other",paste("Bodyfat:",BODYFAT,"%"))
+      BodyPart=c(paste("Other:",100-BODYFAT,"%"),paste("Bodyfat:",BODYFAT,"%"))
       BodyPartPercentage=c(100-BODYFAT,BODYFAT)
       df=data.frame(BodyPart,BodyPartPercentage)
       ggplot(df, aes(x="", y=BodyPartPercentage, fill=BodyPart))+
         geom_bar(stat="identity", width=1, color="white") +
         theme(axis.text.x=element_blank()) +
         scale_fill_manual(values=c(Color, "#00FCE9"))+
-        coord_polar("y", start=0) +
+        xlab("")+
         theme_minimal()+
         theme(
           axis.title.x = element_blank(),
@@ -147,10 +147,15 @@ server<-shinyServer(function(input, output) {
           panel.border = element_blank(),
           panel.grid=element_blank(),
           axis.ticks = element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank(),
           plot.title=element_text(size=30, face="bold")
-        ) 
+        ) +
+        theme_bw(base_size=20)
     }
   })
+  
+  
   
   output$Questions <- renderUI({
     HTML('<br>
@@ -186,15 +191,22 @@ server<-shinyServer(function(input, output) {
           <br>
           The bodyfat suggestion is given by the American Council on Exercise website: https://www.acefitness.org/<br>
           <br>
-          This application is main edited by RUI HUANG <br> 
+          This code and application is maintained by ENZE WANG<br>
+          <br> 
+          This application and the code structure is main edited by RUI HUANG <br> 
           <br>
-          The interface, ggplot and unit part are fixed, edited and maintained by ENZE WANG <br> 
+          The interface, ggplot and unit part are fixed, edited by ENZE WANG <br> 
           <br>
-          Other problems are fixed by HanGyu KANG and CHENYANG JIANG')
+          Other problems are fixed by HanGyu KANG and CHENYANG JIANG<br>
+          <br>
+          <br>
+         ')
   })
 
 
 })
 
 shinyApp(ui = ui, server = server)
+
+
 

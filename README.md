@@ -4,12 +4,12 @@
 
 ## Contribution of Module 2
 
-|                | Github Repository, Main Code    | Shiny Application                               | Two-Page Summary | Narrated Presentation            |
-| -------------- | ------------------------------- | ----------------------------------------------- | ---------------- | -------------------------------- |
-| CHENYANG JIANG | Main editor                     | Fix problem                                     | Fix problem      | Fix problem                      |
-| HanGyu KANG    | Edits PCA, Factor Analysis part | Main editor                                     | Fix problem      | Main editor of video             |
-| RUI HUANG      | Edits model selection           | Main editor                                     | Fix problem      | Fix problem                      |
-| ENZE WANG      | Main editor, maintain           | Edits interface, ggplot and unit part, maintain | Main editor      | Main editor of presentation file |
+|                | Github Repository, Main Code              | Shiny Application                                            | Two-Page Summary                                      | Narrated Presentation            |
+| -------------- | ----------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------- | -------------------------------- |
+| CHENYANG JIANG | Main editor of main code                  | Fix problem                                                  | Fix problem and edits model build part in summary     | Fix problem                      |
+| HanGyu KANG    | Edits tree regression part                | Main editor                                                  | Fix problem and edits tree regression part in summary | Main editor of video             |
+| RUI HUANG      | Edits model selection part                | Main editor                                                  | Fix problem and edits model selection part in summary | Fix problem                      |
+| ENZE WANG      | Main editor or main code, maintain GitHub | Edits interface, ggplot and unit part, maintain the Shiny application and code | Main editor                                           | Main editor of presentation file |
 
 ## Contents of GitHub
 
@@ -22,7 +22,6 @@
   * **CleanData.csv**: our clean data from Module_2.ipynb.
 * **Image**: folder includes all pictures from Module_2.ipynb.
 * **Module_2_Summary.pdf**: our summary pdf. 
-* **Module_2_Presentation.pptx**: our ppt file in narrated presentation
 * **README.md**: this file. 
 
 ## How to use
