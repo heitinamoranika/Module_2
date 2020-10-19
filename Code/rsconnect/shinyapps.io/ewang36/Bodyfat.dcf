@@ -5,8 +5,8 @@ account: ewang36
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2941316
-bundleId: 3753459
+bundleId: 3756467
 url: https://ewang36.shinyapps.io/Bodyfat/
-when: 1602980644.60343
+when: 1603075496.56206
 asMultiple: FALSE
 asStatic: FALSE
