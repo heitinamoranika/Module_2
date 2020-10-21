@@ -16,11 +16,11 @@ ui<-navbarPage('Bodyfat Calculator',inverse = T,collapsible = T,
                                       sidebarPanel(
                                         numericInput("Abdomen", "Abdomen circumference:", min = 20, max = 200, value = NA),
                                         selectInput("Abdomenunit", "Abdomen Units:",list("cm" = "cm","inch" = "inch")),
-                                        helpText("The value must between 20 to 200 cm (7.87402 to 78.7402 inches)"),
+                                        helpText("The value must be between 20 to 200 cm (7.87402 to 78.7402 inches)"),
                                         numericInput("Weight", "Weight:", min = 50, max = 550, value = NA),
                                         selectInput("Weightunit", "Weight Units:",list("lbs" = "lbs","kg" = "kg")),
-                                        helpText("The value  must between 50 to 550 lbs (22.6796 to 249.476 kg)"),
-                                        selectInput("Gender", "Gender:",list("Men" = "Men","Women" = "Women")),
+                                        helpText("The value  must be between 50 to 550 lbs (22.6796 to 249.476 kg)"),
+                                        selectInput("Gender", "Gender:",list("Man" = "Man","Woman" = "Woman")),
                                         helpText("The gender is not necessary for our model prediction, but for body fat suggestion"),
                                         actionButton("calculate",label = "Submit",icon=icon('angle-double-right'))
                                       ),
@@ -97,13 +97,13 @@ server<-shinyServer(function(input, output) {
   output$suggestion <- renderText({
     if(outcome()!="Input Error 1" & outcome()!="Input Error 2" & outcome()!="Please input your data"){
       BODYFAT=outcome()
-        if((BODYFAT<=5 & input$Gender=="Men")        | (BODYFAT<=13 & input$Gender=="Women")){
+        if((BODYFAT<=5 & input$Gender=="Man")        | (BODYFAT<=13 & input$Gender=="Woman")){
           paste("According to the American Council on Exercise, your body fat percentage falls into the essential body fat range, essential fat is the minimum amount of fat for your daily physical health, it is unhealthy to stay here")
-        }else if((BODYFAT<=13 & input$Gender=="Men") | (BODYFAT<=20 & input$Gender=="Women")){
+        }else if((BODYFAT<=13 & input$Gender=="Man") | (BODYFAT<=20 & input$Gender=="Woman")){
           paste("According to the American Council on Exercise, your body fat percentage  is in athletes range, please keep exercise and healthy diet")
-        }else if((BODYFAT<=17 & input$Gender=="Men") | (BODYFAT<=24 & input$Gender=="Women")){
+        }else if((BODYFAT<=17 & input$Gender=="Man") | (BODYFAT<=24 & input$Gender=="Woman")){
           paste("According to the American Council on Exercise, your body fat percentage  is in fitness range, please keep more exercise and healthier diet")
-        }else if((BODYFAT<=24 & input$Gender=="Men") | (BODYFAT<=31 & input$Gender=="Women")){
+        }else if((BODYFAT<=24 & input$Gender=="Man") | (BODYFAT<=31 & input$Gender=="Woman")){
           paste("According to the American Council on Exercise, your body fat percentage  is in acceptable range, you can pay attention to your physical exercise and avoid junk food")
         }else{
           paste("According to the American Council on Exercise, your body fat percentage  is in obesity range, please keep away from junk food, exercise everyday and monitor your own weight. If necessary, you should ask doctors for more advice")
@@ -177,7 +177,7 @@ server<-shinyServer(function(input, output) {
           <br>
           This application is for Bodyfat subjects<br>
           <br>
-          This subject want to predict body fat percentage with your body data<br>
+          This subject wants to predict body fat percentage with your body data<br>
           <br>
           Our rule is: BODYFAT(%) = 0.90*Abdomen circumference(cm) - 0.12*Weight(lbs) - 42.27<br>
           <br>
