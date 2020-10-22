@@ -4,12 +4,12 @@
 
 ## Contribution of Module 2
 
-|                | Github Repository, Main Code              | Shiny Application                                            | Two-Page Summary                                      | Narrated Presentation            |
-| -------------- | ----------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------- | -------------------------------- |
-| CHENYANG JIANG | Main editor of main code                  | Fix problem                                                  | Fix problem and edits model build part in summary     | Fix problem                      |
-| HanGyu KANG    | Edits tree regression part                | Main editor                                                  | Fix problem and edits tree regression part in summary | Main editor of video             |
-| RUI HUANG      | Edits model selection part                | Main editor                                                  | Fix problem and edits model selection part in summary | Fix problem                      |
-| ENZE WANG      | Main editor or main code, maintain GitHub | Edits interface, ggplot and unit part, maintain the Shiny application and code | Main editor                                           | Main editor of presentation file |
+|                | Github Repository, Main Code                                 | Shiny Application                                            | Two-Page Summary                                      | Narrated Presentation                        |
+| -------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ----------------------------------------------------- | -------------------------------------------- |
+| CHENYANG JIANG | Main editor of main code                                     | Fix problem                                                  | Fix problem and edits model build part in summary     | Fix problem and speaker                      |
+| HanGyu KANG    | Edits tree regression part                                   | Main editor                                                  | Fix problem and edits tree regression part in summary | Main editor of video and speaker             |
+| RUI HUANG      | Edits model selection part                                   | Main editor                                                  | Fix problem and edits model selection part in summary | Fix problem and speaker                      |
+| ENZE WANG      | Create and responsible for main code and GitHub. Main editor of main code, maintain GitHub | Edits interface, ggplot and unit part, maintain the Shiny application and code | Main editor                                           | Main editor of presentation file and speaker |
 
 ## Contents of GitHub
 
