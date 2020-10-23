@@ -22,6 +22,7 @@
   * **CleanData.csv**: our clean data from Module_2.ipynb.
 * **Image**: folder includes all pictures from Module_2.ipynb.
 * **Module_2_Summary.pdf**: our summary pdf. 
+* **Module_2_Presentation.mp4**: our presentation. 
 * **README.md**: this file. 
 
 ## How to use
