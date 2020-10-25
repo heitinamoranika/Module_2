@@ -1,3 +1,0 @@
-Shiny App: https://ewang36.shinyapps.io/Bodyfat/
-
-GitHub: https://github.com/moslandwez/Module_2
