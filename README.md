@@ -22,8 +22,7 @@
   * **CleanData.csv**: our clean data from Module_2.ipynb.
 * **Image**: folder includes all pictures from Module_2.ipynb.
 * **Module_2_Summary.pdf**: our summary pdf. 
-* **Module_2_Presentation.mp4**: our presentation, there is no voice vanish problem.
-* **Module_2_Presentation_QuickTime_Player_Only.mp4:** This can only be opened in QuickTime players on Mac, or there is voice vanish problem.
+* **Module_2_Presentation.mp4**: our presentation.
 * **README.md**: this file. 
 
 ## How to use
